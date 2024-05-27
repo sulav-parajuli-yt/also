@@ -1,0 +1,140 @@
+Program               -> StatementList
+
+StatementList         -> Statement { StatementList'.result = Statement.result }
+
+StatementList'        -> Statement { StatementList'.result = StatementList'.result } StatementList' { StatementList'.result = StatementList'.result }
+
+Statement             -> FunctionDefinition { Statement.result = FunctionDefinition.result }
+                       | FunctionCall { Statement.result = FunctionCall.result }
+                       | ConditionalStatement { Statement.result = ConditionalStatement.result }
+                       | AssignmentStatement { Statement.result = AssignmentStatement.result }
+
+FunctionDefinition    -> "function" id "(" ParameterList ")" "{" StatementList "}" ";" { 
+                           if id.lexeme in SymbolTable:
+                               Error("Function '" + id.lexeme + "' already defined")
+                           else:
+                               SymbolTable[id.lexeme] = {"type": "function", "parameters": ParameterList.parameters, "body": StatementList.result}
+                               FunctionDefinition.result = None
+                       }
+
+ParameterList         -> id { ParameterList.parameters = [id.lexeme] } ParameterList'
+
+ParameterList'        -> "," id { ParameterList.parameters.append(id.lexeme) } ParameterList'
+                       | ε { ParameterList.parameters = [] }
+
+FunctionCall          -> id "(" ArgumentList ")" ";" { 
+                           if id.lexeme not in SymbolTable or SymbolTable[id.lexeme]["type"] != "function":
+                               Error("Function '" + id.lexeme + "' is not defined")
+                           elif len(ArgumentList.arguments) != len(SymbolTable[id.lexeme]["parameters"]):
+                               Error("Incorrect number of arguments for function '" + id.lexeme + "'")
+                           else:
+                               arguments = []
+                               for arg in ArgumentList.arguments:
+                                   if isinstance(arg, dict) and "value" in arg:
+                                       arguments.append(arg["value"])
+                                   else:
+                                       arguments.append(arg)
+                               FunctionCall.result = execute_function(id.lexeme, arguments)
+                       }
+
+ArgumentList          -> Expression { ArgumentList.arguments = [Expression.result] } ArgumentList'
+
+ArgumentList'         -> "," Expression { ArgumentList.arguments.append(Expression.result) } ArgumentList'
+                       | ε { ArgumentList.arguments = [] }
+
+ConditionalStatement  -> "if" "(" Expression ")" "{" StatementList "}" "else" "{" StatementList "}" { 
+                           if Expression.result:
+                               ConditionalStatement.result = execute_statement_list(StatementList1.result)
+                           else:
+                               ConditionalStatement.result = execute_statement_list(StatementList2.result)
+                       }
+
+AssignmentStatement   -> id "=" Expression ";" { 
+                           if id.lexeme not in SymbolTable:
+                               Error("Variable '" + id.lexeme + "' is not declared")
+                           else:
+                               value = Expression.result
+                               if isinstance(value, dict) and "value" in value:
+                                   value = value["value"]
+                               SymbolTable[id.lexeme]["value"] = value
+                               AssignmentStatement.result = None
+                       }
+
+Expression            -> Term { Expression'.inherited = Term.result } Expression'
+
+Expression'           -> "+" Term { Expression'.result = Expression'.inherited + Term.result } Expression'
+                       | "-" Term { Expression'.result = Expression'.inherited - Term.result } Expression'
+                       | ε { Expression'.result = Expression'.inherited }
+
+Term                  -> Factor { Term'.inherited = Factor.result } Term'
+
+Term'                 -> "*" Factor { Term'.result = Term'.inherited * Factor.result } Term'
+                       | "%" Factor { Term'.result = Term'.inherited % Factor.result } Term'
+                       | ε { Term'.result = Term'.inherited }
+
+Factor                -> UnaryOperation Factor { 
+                           if UnaryOperation.op == "!":
+                               Factor.result = not Factor.result
+                       }
+                       | ComparisonOperation Factor { 
+                           if ComparisonOperation.op == "==":
+                               Factor.result = Factor.result == Factor.result2
+                           elif ComparisonOperation.op == "!=":
+                               Factor.result = Factor.result != Factor.result2
+                           elif ComparisonOperation.op == ">":
+                               Factor.result = Factor.result > Factor.result2
+                           elif ComparisonOperation.op == "<":
+                               Factor.result = Factor.result < Factor.result2
+                           elif ComparisonOperation.op == ">=":
+                               Factor.result = Factor.result >= Factor.result2
+                           elif ComparisonOperation.op == "<=":
+                               Factor.result = Factor.result <= Factor.result2
+                       }
+                       | ParenthesizedExpression { Factor.result = ParenthesizedExpression.result }
+                       | FunctionCall { Factor.result = FunctionCall.result }
+                       | id { 
+                           if id.lexeme not in SymbolTable:
+                               Error("Variable '" + id.lexeme + "' is not declared")
+                           else:
+                               Factor.result = SymbolTable[id.lexeme]["value"]
+                       }
+                       | value { 
+                           Factor.result = value
+                       }
+
+UnaryOperation        -> "!" { UnaryOperation.op = "!" }
+
+ComparisonOperation   -> "==" { ComparisonOperation.op = "==" }
+                       | "!=" { ComparisonOperation.op = "!=" }
+                       | ">" { ComparisonOperation.op = ">" }
+                       | "<" { ComparisonOperation.op = "<" }
+                       | ">=" { ComparisonOperation.op = ">=" }
+                       | "<=" { ComparisonOperation.op = "<=" }
+
+ParenthesizedExpression -> "(" Expression ")" { ParenthesizedExpression.result = Expression.result }
+
+value                 -> // Numeric or string literal
+
+id                    -> // Identifier
+
+execute_statement_list(statements):
+    result = None
+    for statement in statements:
+        result = execute_statement(statement)
+    return result
+
+execute_statement(statement):
+    return statement["result"]
+
+execute_function(func_name, args):
+    if func_name not in SymbolTable:
+        Error("Function '" + func_name + "' is not defined")
+    else:
+        parameters = SymbolTable[func_name]["parameters"]
+        local_symbol_table = {}
+        if len(parameters) != len(args):
+            Error("Incorrect number of arguments for function '" + func_name + "'")
+        else:
+            for i in range(len(parameters)):
+                local_symbol_table[parameters[i]] = args[i]
+            return execute_statement_list(SymbolTable[func_name]["body"])
