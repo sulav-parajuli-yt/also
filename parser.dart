@@ -23,18 +23,30 @@ List<Token> tokens = [
   Token("var", TokenType.VAR),
   Token("y", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
-  Token("true", TokenType.BOOL_LITERAL),
+  Token("false", TokenType.BOOL_LITERAL),
   Token("or", TokenType.OR_OP),
   Token("false", TokenType.BOOL_LITERAL),
   Token(";", TokenType.SEMICOLON),
+  Token("if", TokenType.IF),
+  Token("(", TokenType.OPEN_PAREN),
+  Token("y", TokenType.IDENTIFIER),
+  Token(")", TokenType.CLOSE_PAREN),
+  Token("{", TokenType.OPEN_BRACE),
+  Token("var", TokenType.VAR),
+  Token("m", TokenType.IDENTIFIER),
+  Token("=", TokenType.ASSIGN_OP),
+  Token("10", TokenType.STRING_LITERAL),
+  Token(";", TokenType.SEMICOLON),
+  Token("}", TokenType.CLOSE_BRACE),
 ];
 
 /*
 S -> StatementList
 StatementList -> Stmt StmtList | ε
-Stmt -> V | A | E  
+Stmt -> V | A | E | IfStmt
 V -> var id = E;
 A -> id = E;
+IfStmt -> if (E) { StatementList }
 E -> value R | (E) R | id R 
 R -> + E R | - E R | * E R | and E R | or E R | ε
 */
@@ -49,7 +61,7 @@ void moveAheadByCheck(TokenType type) {
 
 void StatementList() {
   while (currentToken < tokens.length &&
-      tokens[currentToken].type != TokenType.CLOSE_PAREN) {
+      tokens[currentToken].type != TokenType.CLOSE_BRACE) {
     Stmt();
   }
 }
@@ -57,6 +69,8 @@ void StatementList() {
 void Stmt() {
   if (tokens[currentToken].type == TokenType.VAR) {
     V();
+  } else if (tokens[currentToken].type == TokenType.IF) {
+    IfStmt();
   } else if (tokens[currentToken].type == TokenType.IDENTIFIER &&
       tokens[currentToken + 1].type == TokenType.ASSIGN_OP) {
     A();
@@ -64,6 +78,25 @@ void Stmt() {
     dynamic result = E();
     print("Expression result: $result");
   }
+}
+
+void IfStmt() {
+  // IfStmt -> if (E) { StatementList }
+  moveAheadByCheck(TokenType.IF);
+  moveAheadByCheck(TokenType.OPEN_PAREN);
+  var result = E();
+  moveAheadByCheck(TokenType.CLOSE_PAREN);
+  moveAheadByCheck(TokenType.OPEN_BRACE);
+  // how to parse statement list
+  if (result) {
+    StatementList();
+  } else {
+    // If the condition is false, skip the statements inside the if block
+    while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+      currentToken++;
+    }
+  }
+  moveAheadByCheck(TokenType.CLOSE_BRACE);
 }
 
 void V() {
@@ -176,6 +209,7 @@ dynamic R(dynamic inhValue) {
 }
 
 void parse() {
+  currentToken = 0;
   StatementList();
 }
 
