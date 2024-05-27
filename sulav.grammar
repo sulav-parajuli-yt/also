@@ -1,34 +1,7 @@
-// S  -> L Sp
-// 
-// Sp -> L Sp | ε
-// 
-// L  -> F Lp
-// 
-// Lp -> S Lp | ε
-// 
-// F  -> f id ( P ) { L }
-// 
-// P  -> id Pp
-// 
-// Pp -> , id Pp  | ε
-// 
-// C  -> i ( E ) { L } e { L }
-// 
-// A  -> id = E ;
-// 
-// E  -> T Ep
-// 
-// Ep -> + T Ep | - T Ep | ε
-// 
-// T  -> F Tp
-// 
-// Tp -> * F Tp | % F Tp | ε
-// 
-// F  -> ! F | O F | ( E ) | id | v
-// 
-// O  -> == | != | > | < | >= | <=
-// 
-// v  -> // Numeric or string literal
-// 
-// id -> // Identifier
-// 
+S -> StatementList
+StatementList -> Stmt StmtList | ε
+Stmt -> V | A | E 
+V -> var id = E;
+A -> id = E;
+E -> value R | (E) R | id R
+R -> + E R | - E R | * E R | ε

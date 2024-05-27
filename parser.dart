@@ -2,6 +2,7 @@
 import 'tokens.dart';
 
 Map<String, Map<String, dynamic>> symbolTable = {"main": {}};
+String currentScope = "main";
 
 int currentToken = 0;
 
@@ -9,19 +10,15 @@ List<Token> tokens = [
   Token("var", TokenType.VAR),
   Token("x", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
-  Token("10", TokenType.INTEGER_LITERAL),
+  Token("10", TokenType.STRING_LITERAL),
   Token(";", TokenType.SEMICOLON),
   Token("x", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
   Token("(", TokenType.OPEN_PAREN),
-  Token("5", TokenType.INTEGER_LITERAL),
-  Token("*", TokenType.MUL_OP),
-  Token("5", TokenType.INTEGER_LITERAL),
+  Token("Sulav", TokenType.STRING_LITERAL),
   Token("+", TokenType.ADD_OP),
-  Token("2", TokenType.INTEGER_LITERAL),
+  Token(" Parajuli", TokenType.STRING_LITERAL),
   Token(")", TokenType.CLOSE_PAREN),
-  Token("+", TokenType.MUL_OP),
-  Token("8", TokenType.INTEGER_LITERAL),
   Token(";", TokenType.SEMICOLON),
 ];
 
@@ -57,7 +54,7 @@ void Stmt() {
       tokens[currentToken + 1].type == TokenType.ASSIGN_OP) {
     A();
   } else {
-    int result = E();
+    dynamic result = E();
     print("Expression result: $result");
   }
 }
@@ -67,7 +64,7 @@ void V() {
   String id = tokens[currentToken].lexeme;
   moveAheadByCheck(TokenType.IDENTIFIER);
   moveAheadByCheck(TokenType.ASSIGN_OP);
-  int value = E();
+  dynamic value = E();
   moveAheadByCheck(TokenType.SEMICOLON);
   symbolTable["main"]![id] = value;
   print("Declared variable $id with value $value");
@@ -77,7 +74,7 @@ void A() {
   String id = tokens[currentToken].lexeme;
   moveAheadByCheck(TokenType.IDENTIFIER);
   moveAheadByCheck(TokenType.ASSIGN_OP);
-  int value = E();
+  dynamic value = E();
   moveAheadByCheck(TokenType.SEMICOLON);
   if (symbolTable["main"]!.containsKey(id)) {
     symbolTable["main"]![id] = value;
@@ -87,11 +84,30 @@ void A() {
   }
 }
 
-int E() {
-  int value;
-  if (tokens[currentToken].type == TokenType.INTEGER_LITERAL) {
+dynamic E() {
+  dynamic value;
+  TokenType tt = tokens[currentToken].type;
+  if (tt == TokenType.INTEGER_LITERAL ||
+      tt == TokenType.FLOAT_LITERAL ||
+      tt == TokenType.STRING_LITERAL) {
     // Handle integer literal
-    value = int.parse(tokens[currentToken].lexeme);
+    switch (tt) {
+      case TokenType.INTEGER_LITERAL:
+        value = int.parse(tokens[currentToken].lexeme);
+        break;
+      case TokenType.FLOAT_LITERAL:
+        value = double.parse(tokens[currentToken].lexeme);
+        break;
+      case TokenType.STRING_LITERAL:
+        value = tokens[currentToken].lexeme;
+        break;
+      default:
+        value = tokens[currentToken].lexeme;
+    }
+    currentToken++;
+  } else if (tokens[currentToken].type == TokenType.IDENTIFIER) {
+    // lookup
+    value = symbolTable[currentScope]![tokens[currentToken].lexeme];
     currentToken++;
   } else if (tokens[currentToken].type == TokenType.OPEN_PAREN) {
     // Handle parenthesized expression
@@ -106,28 +122,29 @@ int E() {
   return R(value);
 }
 
-int R(int inhValue) {
+dynamic R(dynamic inhValue) {
   // Empty check
   if (currentToken >= tokens.length) {
     return inhValue;
   }
 
-  int synValue = inhValue;
+  dynamic synValue = inhValue;
 
   // Handle operators
   if (tokens[currentToken].type == TokenType.ADD_OP) {
     currentToken++;
-    int value = E();
+    dynamic value = E();
     synValue = inhValue + value;
     return R(synValue);
   } else if (tokens[currentToken].type == TokenType.MINUS_OP) {
     currentToken++;
-    int value = E();
+    dynamic value = E();
     synValue = inhValue - value;
     return R(synValue);
   } else if (tokens[currentToken].type == TokenType.MUL_OP) {
     currentToken++;
-    int value = E();
+    dynamic value = E();
+    // if(value is int || value is double)
     synValue = inhValue * value;
     return R(synValue);
   }

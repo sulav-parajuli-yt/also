@@ -1,8 +1,8 @@
 
 enum TokenType {
-  ID,
   INTEGER_LITERAL,
   STRING_LITERAL,
+  FLOAT_LITERAL,
   
   SEMICOLON,
   OPEN_PAREN,
