@@ -7,47 +7,41 @@ String currentScope = "main";
 int currentToken = 0;
 
 List<Token> tokens = [
-  Token("if", TokenType.IF),
-  Token("(", TokenType.OPEN_PAREN),
-  Token("true", TokenType.BOOL_LITERAL),
-  Token(")", TokenType.CLOSE_PAREN),
-  Token("{", TokenType.OPEN_BRACE),
   Token("var", TokenType.VAR),
   Token("first", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
   Token("10", TokenType.STRING_LITERAL),
   Token(";", TokenType.SEMICOLON),
-  Token("}", TokenType.CLOSE_BRACE),
-  Token("elseif", TokenType.ELSEIF),
+  Token("var", TokenType.VAR),
+  Token("val", TokenType.IDENTIFIER),
+  Token("=", TokenType.ASSIGN_OP),
+  Token("true", TokenType.BOOL_LITERAL),
+  Token(";", TokenType.SEMICOLON),
+  Token("while", TokenType.WHILE),
   Token("(", TokenType.OPEN_PAREN),
-  Token("false", TokenType.BOOL_LITERAL),
+  Token("val", TokenType.IDENTIFIER),
   Token(")", TokenType.CLOSE_PAREN),
   Token("{", TokenType.OPEN_BRACE),
-  Token("var", TokenType.VAR),
-  Token("second", TokenType.IDENTIFIER),
+  Token("first", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
-  Token("20", TokenType.STRING_LITERAL),
+  Token("1", TokenType.INTEGER_LITERAL),
   Token(";", TokenType.SEMICOLON),
-  Token("}", TokenType.CLOSE_BRACE),
-  Token("else", TokenType.ELSE),
-  Token("{", TokenType.OPEN_BRACE),
-  Token("var", TokenType.VAR),
-  Token("third", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("30", TokenType.STRING_LITERAL),
-  Token(";", TokenType.SEMICOLON),
+  Token("print", TokenType.PRINT),
+  Token("first", TokenType.IDENTIFIER),
   Token("}", TokenType.CLOSE_BRACE),
 ];
 
 /*
 S -> StatementList
 StatementList -> Stmt StmtList | ε
-Stmt -> V | A | E | IfStmt
+Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt
+PrintStmt -> print E
 V -> var id = E;
 A -> id = E;
 IfStmt -> if (E) { StatementList } ElseIfStmt
 ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ε
 Else ->  else { StatementList } | ε
+WhileStmt -> while (E) { StatementList }
 E -> value R | (E) R | id R 
 R -> + E R | - E R | * E R | and E R | or E R | ε
 */
@@ -72,13 +66,23 @@ void Stmt() {
     V();
   } else if (tokens[currentToken].type == TokenType.IF) {
     IfStmt();
+  } else if (tokens[currentToken].type == TokenType.WHILE) {
+    WhileStmt();
+  } else if (tokens[currentToken].type == TokenType.PRINT) {
+    PrintStmt();
   } else if (tokens[currentToken].type == TokenType.IDENTIFIER &&
       tokens[currentToken + 1].type == TokenType.ASSIGN_OP) {
     A();
   } else {
     dynamic result = E();
-    print("Expression result: $result");
+    printK("Expression result: $result");
   }
+}
+
+void PrintStmt() {
+  moveAheadByCheck(TokenType.PRINT);
+  var result = E();
+  print(result);
 }
 
 void IfStmt() {
@@ -103,6 +107,26 @@ void IfStmt() {
     }
     moveAheadByCheck(TokenType.CLOSE_BRACE);
     ElseIfStmt();
+  }
+}
+
+void WhileStmt() {
+  // WhileStmt -> while (E) { StatementList }
+  var pos = currentToken;
+  moveAheadByCheck(TokenType.WHILE);
+  moveAheadByCheck(TokenType.OPEN_PAREN);
+  var result = E();
+  moveAheadByCheck(TokenType.CLOSE_PAREN);
+  moveAheadByCheck(TokenType.OPEN_BRACE);
+  if (result) {
+    StatementList();
+    moveAheadByCheck(TokenType.CLOSE_BRACE);
+    currentToken = pos;
+  } else {
+    while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+      currentToken++;
+    }
+    moveAheadByCheck(TokenType.CLOSE_BRACE);
   }
 }
 
@@ -176,7 +200,7 @@ void V() {
   dynamic value = E();
   moveAheadByCheck(TokenType.SEMICOLON);
   symbolTable["main"]![id] = value;
-  print("Declared variable $id with value $value");
+  printK("Declared variable $id with value $value");
 }
 
 void A() {
@@ -187,7 +211,7 @@ void A() {
   moveAheadByCheck(TokenType.SEMICOLON);
   if (symbolTable["main"]!.containsKey(id)) {
     symbolTable["main"]![id] = value;
-    print("Assigned variable $id with value $value");
+    printK("Assigned variable $id with value $value");
   } else {
     throw Exception("Variable $id not declared");
   }
