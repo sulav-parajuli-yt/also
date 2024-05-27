@@ -7,35 +7,34 @@ String currentScope = "main";
 int currentToken = 0;
 
 List<Token> tokens = [
-  Token("var", TokenType.VAR),
-  Token("x", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("10", TokenType.STRING_LITERAL),
-  Token(";", TokenType.SEMICOLON),
-  Token("x", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("(", TokenType.OPEN_PAREN),
-  Token("Sulav", TokenType.STRING_LITERAL),
-  Token("+", TokenType.ADD_OP),
-  Token(" Parajuli", TokenType.STRING_LITERAL),
-  Token(")", TokenType.CLOSE_PAREN),
-  Token(";", TokenType.SEMICOLON),
-  Token("var", TokenType.VAR),
-  Token("y", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("false", TokenType.BOOL_LITERAL),
-  Token("or", TokenType.OR_OP),
-  Token("false", TokenType.BOOL_LITERAL),
-  Token(";", TokenType.SEMICOLON),
   Token("if", TokenType.IF),
   Token("(", TokenType.OPEN_PAREN),
-  Token("y", TokenType.IDENTIFIER),
+  Token("true", TokenType.BOOL_LITERAL),
   Token(")", TokenType.CLOSE_PAREN),
   Token("{", TokenType.OPEN_BRACE),
   Token("var", TokenType.VAR),
-  Token("m", TokenType.IDENTIFIER),
+  Token("first", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
   Token("10", TokenType.STRING_LITERAL),
+  Token(";", TokenType.SEMICOLON),
+  Token("}", TokenType.CLOSE_BRACE),
+  Token("elseif", TokenType.ELSEIF),
+  Token("(", TokenType.OPEN_PAREN),
+  Token("false", TokenType.BOOL_LITERAL),
+  Token(")", TokenType.CLOSE_PAREN),
+  Token("{", TokenType.OPEN_BRACE),
+  Token("var", TokenType.VAR),
+  Token("second", TokenType.IDENTIFIER),
+  Token("=", TokenType.ASSIGN_OP),
+  Token("20", TokenType.STRING_LITERAL),
+  Token(";", TokenType.SEMICOLON),
+  Token("}", TokenType.CLOSE_BRACE),
+  Token("else", TokenType.ELSE),
+  Token("{", TokenType.OPEN_BRACE),
+  Token("var", TokenType.VAR),
+  Token("third", TokenType.IDENTIFIER),
+  Token("=", TokenType.ASSIGN_OP),
+  Token("30", TokenType.STRING_LITERAL),
   Token(";", TokenType.SEMICOLON),
   Token("}", TokenType.CLOSE_BRACE),
 ];
@@ -46,7 +45,9 @@ StatementList -> Stmt StmtList | ε
 Stmt -> V | A | E | IfStmt
 V -> var id = E;
 A -> id = E;
-IfStmt -> if (E) { StatementList }
+IfStmt -> if (E) { StatementList } ElseIfStmt
+ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ε
+Else ->  else { StatementList } | ε
 E -> value R | (E) R | id R 
 R -> + E R | - E R | * E R | and E R | or E R | ε
 */
@@ -81,22 +82,90 @@ void Stmt() {
 }
 
 void IfStmt() {
-  // IfStmt -> if (E) { StatementList }
+  // IfStmt -> if (E) { StatementList } ElseIfStmt
   moveAheadByCheck(TokenType.IF);
   moveAheadByCheck(TokenType.OPEN_PAREN);
   var result = E();
   moveAheadByCheck(TokenType.CLOSE_PAREN);
   moveAheadByCheck(TokenType.OPEN_BRACE);
-  // how to parse statement list
   if (result) {
     StatementList();
+    moveAheadByCheck(TokenType.CLOSE_BRACE);
+    // If the if statement block executes, skip over any else-if or else blocks
+    while (currentToken < tokens.length &&
+        (tokens[currentToken].type == TokenType.ELSEIF ||
+            tokens[currentToken].type == TokenType.ELSE)) {
+      skipBlock();
+    }
   } else {
-    // If the condition is false, skip the statements inside the if block
     while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
       currentToken++;
     }
+    moveAheadByCheck(TokenType.CLOSE_BRACE);
+    ElseIfStmt();
   }
-  moveAheadByCheck(TokenType.CLOSE_BRACE);
+}
+
+void ElseIfStmt() {
+  // ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ElseStmt | ε
+  if (currentToken < tokens.length &&
+      tokens[currentToken].type == TokenType.ELSEIF) {
+    moveAheadByCheck(TokenType.ELSEIF);
+    moveAheadByCheck(TokenType.OPEN_PAREN);
+    var result = E();
+    moveAheadByCheck(TokenType.CLOSE_PAREN);
+    moveAheadByCheck(TokenType.OPEN_BRACE);
+    if (result) {
+      StatementList();
+      moveAheadByCheck(TokenType.CLOSE_BRACE);
+      // If the elseif statement block executes, skip over any remaining elseif or else blocks
+      while (currentToken < tokens.length &&
+          (tokens[currentToken].type == TokenType.ELSEIF ||
+              tokens[currentToken].type == TokenType.ELSE)) {
+        skipBlock();
+      }
+    } else {
+      while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+        currentToken++;
+      }
+      moveAheadByCheck(TokenType.CLOSE_BRACE);
+      ElseIfStmt();
+    }
+  } else {
+    ElseStmt();
+  }
+}
+
+void ElseStmt() {
+  // ElseStmt -> else { StatementList } | ε
+  if (currentToken < tokens.length &&
+      tokens[currentToken].type == TokenType.ELSE) {
+    moveAheadByCheck(TokenType.ELSE);
+    moveAheadByCheck(TokenType.OPEN_BRACE);
+    StatementList();
+    moveAheadByCheck(TokenType.CLOSE_BRACE);
+  }
+}
+
+void skipBlock() {
+  // Helper function to skip over blocks of code
+  if (tokens[currentToken].type == TokenType.ELSEIF ||
+      tokens[currentToken].type == TokenType.ELSE) {
+    currentToken++;
+    if (tokens[currentToken].type == TokenType.OPEN_PAREN) {
+      // Skip over the condition part for elseif
+      currentToken++;
+      while (tokens[currentToken].type != TokenType.CLOSE_PAREN) {
+        currentToken++;
+      }
+      currentToken++; // Skip the closing parenthesis
+    }
+    moveAheadByCheck(TokenType.OPEN_BRACE);
+    while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+      currentToken++;
+    }
+    currentToken++; // Skip the closing brace
+  }
 }
 
 void V() {
