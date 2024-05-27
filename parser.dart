@@ -10,7 +10,7 @@ List<Token> tokens = [
   Token("var", TokenType.VAR),
   Token("first", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
-  Token("10", TokenType.INTEGER_LITERAL),
+  Token("1", TokenType.INTEGER_LITERAL),
   Token(";", TokenType.SEMICOLON),
   Token("var", TokenType.VAR),
   Token("val", TokenType.IDENTIFIER),
@@ -28,18 +28,20 @@ List<Token> tokens = [
   Token("+", TokenType.ADD_OP),
   Token("1", TokenType.INTEGER_LITERAL),
   Token(";", TokenType.SEMICOLON),
-  // Token("if", TokenType.IF),
-  // Token("(", TokenType.OPEN_PAREN),
-  // Token("", TokenType.BOOL_LITERAL),
-  // Token(")", TokenType.CLOSE_PAREN),
-  // Token("{", TokenType.OPEN_BRACE),
+  Token("print", TokenType.PRINT),
+  Token("first", TokenType.IDENTIFIER),
+  Token("if", TokenType.IF),
+  Token("(", TokenType.OPEN_PAREN),
+  Token("first", TokenType.IDENTIFIER),
+  Token("==", TokenType.DOUBLE_EQUAL_OP),
+  Token("5", TokenType.INTEGER_LITERAL),
+  Token(")", TokenType.CLOSE_PAREN),
+  Token("{", TokenType.OPEN_BRACE),
   Token("val", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
   Token("false", TokenType.BOOL_LITERAL),
   Token(";", TokenType.SEMICOLON),
-  // Token("}", TokenType.CLOSE_BRACE),
-  Token("print", TokenType.PRINT),
-  Token("first", TokenType.IDENTIFIER),
+  Token("}", TokenType.CLOSE_BRACE),
   Token("}", TokenType.CLOSE_BRACE),
 ];
 
@@ -55,7 +57,7 @@ ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ε
 Else ->  else { StatementList } | ε
 WhileStmt -> while (E) { StatementList }
 E -> value R | (E) R | id R 
-R -> + E R | - E R | * E R | and E R | or E R | ε
+R -> + E R | - E R | * E R | and E R | or E R | == E R | != E R ε
 */
 
 void moveAheadByCheck(TokenType type) {
@@ -307,6 +309,18 @@ dynamic R(dynamic inhValue) {
     dynamic value = E();
     // if(value is int || value is double)
     synValue = inhValue || value;
+    return R(synValue);
+  }  else if (tokens[currentToken].type == TokenType.DOUBLE_EQUAL_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue == value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.NOT_EQUAL_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue != value;
     return R(synValue);
   }
 

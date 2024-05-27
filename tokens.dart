@@ -32,6 +32,8 @@ enum TokenType {
   DIV_OP,
   AND_OP,
   OR_OP,
+  DOUBLE_EQUAL_OP,
+  NOT_EQUAL_OP,
   EOF,
 
 
