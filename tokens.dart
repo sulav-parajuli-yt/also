@@ -1,5 +1,3 @@
-import 'parser2.dart';
-
 enum TokenType {
   // libs keyword
   PRINT,
@@ -32,7 +30,6 @@ enum TokenType {
   OR_OP,
   DOUBLE_EQUAL_OP,
   NOT_EQUAL_OP,
-  EOF,
 
   COMMA,
   RETURN,
@@ -48,18 +45,6 @@ class Token {
 
   @override
   String toString() {
-    return this.lexeme;
+    return this.lexeme + "" + this.type.name;
   }
-}
-
-void moveAheadByCheck(TokenType type) {
-  if (tokens[currentToken].type == type) {
-    currentToken++;
-  } else {
-    throw Exception("Expected ${type} but got ${tokens[currentToken].type}");
-  }
-}
-
-void printK(String v) {
-  // print(v);
 }

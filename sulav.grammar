@@ -1,7 +1,0 @@
-S -> StatementList
-StatementList -> Stmt StmtList | ε
-Stmt -> V | A | E 
-V -> var id = E;
-A -> id = E;
-E -> value R | (E) R | id R
-R -> + E R | - E R | * E R | ε
