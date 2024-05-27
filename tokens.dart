@@ -1,4 +1,3 @@
-
 import 'parser2.dart';
 
 enum TokenType {
@@ -9,7 +8,7 @@ enum TokenType {
   STRING_LITERAL,
   FLOAT_LITERAL,
   BOOL_LITERAL,
-  
+
   SEMICOLON,
   OPEN_PAREN,
   CLOSE_PAREN,
@@ -24,7 +23,6 @@ enum TokenType {
   ELSE,
   ELSEIF,
 
-
   // operators
   ADD_OP,
   MINUS_OP,
@@ -36,7 +34,10 @@ enum TokenType {
   NOT_EQUAL_OP,
   EOF,
 
+  COMMA,
+  RETURN,
 
+  FUNCTION,
 }
 
 class Token {
@@ -51,7 +52,6 @@ class Token {
   }
 }
 
-
 void moveAheadByCheck(TokenType type) {
   if (tokens[currentToken].type == type) {
     currentToken++;
@@ -59,7 +59,6 @@ void moveAheadByCheck(TokenType type) {
     throw Exception("Expected ${type} but got ${tokens[currentToken].type}");
   }
 }
-
 
 void printK(String v) {
   // print(v);

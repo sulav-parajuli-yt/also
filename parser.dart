@@ -1,64 +1,155 @@
-// A Basic Expression only parser
+// A Basic Expression only parser, Really?
 import 'tokens.dart';
 
 Map<String, Map<String, dynamic>> symbolTable = {"main": {}};
 String currentScope = "main";
+List<dynamic> functionReturnStack = [];
 
 int currentToken = 0;
-
 List<Token> tokens = [
   Token("var", TokenType.VAR),
   Token("first", TokenType.IDENTIFIER),
   Token("=", TokenType.ASSIGN_OP),
   Token("1", TokenType.INTEGER_LITERAL),
   Token(";", TokenType.SEMICOLON),
-  Token("var", TokenType.VAR),
-  Token("val", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("true", TokenType.BOOL_LITERAL),
-  Token(";", TokenType.SEMICOLON),
-  Token("while", TokenType.WHILE),
+  Token("function", TokenType.FUNCTION), 
+  Token("addOne", TokenType.IDENTIFIER), 
   Token("(", TokenType.OPEN_PAREN),
-  Token("val", TokenType.IDENTIFIER),
+  Token("num", TokenType.IDENTIFIER), 
   Token(")", TokenType.CLOSE_PAREN),
   Token("{", TokenType.OPEN_BRACE),
-  Token("first", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("first", TokenType.IDENTIFIER),
+  Token("return", TokenType.RETURN),
+  Token("num", TokenType.IDENTIFIER), 
   Token("+", TokenType.ADD_OP),
   Token("1", TokenType.INTEGER_LITERAL),
+  Token("}", TokenType.CLOSE_BRACE),
+  Token("var", TokenType.VAR),
+  Token("result", TokenType.IDENTIFIER),
+  Token("=", TokenType.ASSIGN_OP),
+  Token("addOne", TokenType.IDENTIFIER), 
+  Token("(", TokenType.OPEN_PAREN),
+  Token("first", TokenType.IDENTIFIER), 
+  Token(")", TokenType.CLOSE_PAREN),
   Token(";", TokenType.SEMICOLON),
   Token("print", TokenType.PRINT),
-  Token("first", TokenType.IDENTIFIER),
-  Token("if", TokenType.IF),
-  Token("(", TokenType.OPEN_PAREN),
-  Token("first", TokenType.IDENTIFIER),
-  Token("==", TokenType.DOUBLE_EQUAL_OP),
-  Token("5", TokenType.INTEGER_LITERAL),
-  Token(")", TokenType.CLOSE_PAREN),
-  Token("{", TokenType.OPEN_BRACE),
-  Token("val", TokenType.IDENTIFIER),
-  Token("=", TokenType.ASSIGN_OP),
-  Token("false", TokenType.BOOL_LITERAL),
-  Token(";", TokenType.SEMICOLON),
-  Token("}", TokenType.CLOSE_BRACE),
-  Token("}", TokenType.CLOSE_BRACE),
+  Token("result", TokenType.IDENTIFIER),
 ];
+
+class FunctionDefinition {
+  final List<String> parameters;
+  final List<Token> functionBodyTokens;
+
+  FunctionDefinition(this.parameters, this.functionBodyTokens);
+
+  @override
+  String toString() {
+    return functionBodyTokens.toString();
+  }
+}
 
 /*
 S -> StatementList
 StatementList -> Stmt StmtList | ε
-Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt
+Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef 
 PrintStmt -> print E
+ReturnStmt -> return E
 V -> var id = E;
 A -> id = E;
 IfStmt -> if (E) { StatementList } ElseIfStmt
 ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ε
 Else ->  else { StatementList } | ε
 WhileStmt -> while (E) { StatementList }
-E -> value R | (E) R | id R 
+E -> value R | (E) R | id R | FuncCall
 R -> + E R | - E R | * E R | and E R | or E R | == E R | != E R ε
+FuncDef -> function id (Params) { StatementList }
+Params -> id ParamsTail | ε
+ParamsTail -> , id ParamsTail | ε
+FuncCall -> id (Args)
+Args -> E ArgsTail | ε
+ArgsTail -> , E ArgsTail | ε
 */
+void FuncDef() {
+  moveAheadByCheck(TokenType.FUNCTION);
+  Token idToken = tokens[currentToken];
+  String functionName = idToken.lexeme;
+  moveAheadByCheck(TokenType.IDENTIFIER);
+  moveAheadByCheck(TokenType.OPEN_PAREN);
+  // Parse parameters
+  List<String> parameters = [];
+  while (tokens[currentToken].type != TokenType.CLOSE_PAREN) {
+    parameters.add(tokens[currentToken].lexeme);
+    moveAheadByCheck(TokenType.IDENTIFIER);
+    if (tokens[currentToken].type == TokenType.COMMA) {
+      moveAheadByCheck(TokenType.COMMA);
+    }
+  }
+  moveAheadByCheck(TokenType.CLOSE_PAREN);
+  moveAheadByCheck(TokenType.OPEN_BRACE);
+  // Parse function body
+  List<Token> functionBodyTokens = [];
+  while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+    functionBodyTokens.add(tokens[currentToken]);
+    currentToken++;
+  }
+  moveAheadByCheck(TokenType.CLOSE_BRACE);
+  // Store function definition in symbol table
+  symbolTable[currentScope]![functionName] =
+      FunctionDefinition(parameters, functionBodyTokens);
+}
+
+dynamic FuncCall() {
+  Token idToken = tokens[currentToken];
+  String functionName = idToken.lexeme;
+  moveAheadByCheck(TokenType.IDENTIFIER);
+  moveAheadByCheck(TokenType.OPEN_PAREN);
+  // Parse arguments
+  List<dynamic> arguments = [];
+  while (tokens[currentToken].type != TokenType.CLOSE_PAREN) {
+    arguments.add(E());
+    if (tokens[currentToken].type == TokenType.COMMA) {
+      moveAheadByCheck(TokenType.COMMA);
+    }
+  }
+  moveAheadByCheck(TokenType.CLOSE_PAREN);
+  // Execute function
+  return executeFunction(functionName, arguments);
+}
+
+dynamic executeFunction(String functionName, List<dynamic> arguments) {
+  // Retrieve function definition from symbol table
+  FunctionDefinition? funcDef = symbolTable[currentScope]![functionName];
+  if (funcDef == null) {
+    throw Exception("Function $functionName not defined");
+  }
+  // Create a new symbol table for the function's scope
+  print("Here");
+
+  Map<String, dynamic> functionScope = {};
+  for (int i = 0; i < funcDef.parameters.length; i++) {
+    functionScope[funcDef.parameters[i]] = arguments[i];
+  }
+  // Execute function body with the new scope
+  Map<String, dynamic> previousScope = symbolTable[currentScope]!;
+
+  symbolTable[currentScope] = functionScope;
+
+  print(symbolTable);
+  // currentScope = functionName; // Update current scope to function's scope
+  executeStatements(funcDef.functionBodyTokens);
+  // currentScope = "main"; // Restore current scope
+  symbolTable[currentScope] = previousScope; // Restore previous symbol table
+  return functionReturnStack.removeAt(0);
+}
+
+void executeStatements(List<Token> tokens2) {
+  int savedTokenIndex = currentToken;
+  currentToken = 0;
+  List<Token> tokensTemp = tokens;
+  tokens = tokens2;
+  StatementList();
+  currentToken = savedTokenIndex;
+  tokens = tokensTemp;
+}
 
 void moveAheadByCheck(TokenType type) {
   if (tokens[currentToken].type == type) {
@@ -84,6 +175,10 @@ void Stmt() {
     WhileStmt();
   } else if (tokens[currentToken].type == TokenType.PRINT) {
     PrintStmt();
+  } else if (tokens[currentToken].type == TokenType.RETURN) {
+    ReturnStmt();
+  } else if (tokens[currentToken].type == TokenType.FUNCTION) {
+    FuncDef();
   } else if (tokens[currentToken].type == TokenType.IDENTIFIER &&
       tokens[currentToken + 1].type == TokenType.ASSIGN_OP) {
     A();
@@ -97,6 +192,13 @@ void PrintStmt() {
   moveAheadByCheck(TokenType.PRINT);
   var result = E();
   print(result);
+}
+
+void ReturnStmt() {
+  moveAheadByCheck(TokenType.RETURN);
+  var result = E();
+  functionReturnStack.insert(0, result);
+  // print(result);
 }
 
 void IfStmt() {
@@ -256,6 +358,11 @@ dynamic E() {
         value = tokens[currentToken].lexeme;
     }
     currentToken++;
+  } else if (tokens[currentToken].type == TokenType.IDENTIFIER &&
+      currentToken + 1 < tokens.length &&
+      tokens[currentToken + 1].type == TokenType.OPEN_PAREN) {
+    // fn call
+    return FuncCall();
   } else if (tokens[currentToken].type == TokenType.IDENTIFIER) {
     // lookup
     value = symbolTable[currentScope]![tokens[currentToken].lexeme];
@@ -310,7 +417,7 @@ dynamic R(dynamic inhValue) {
     // if(value is int || value is double)
     synValue = inhValue || value;
     return R(synValue);
-  }  else if (tokens[currentToken].type == TokenType.DOUBLE_EQUAL_OP) {
+  } else if (tokens[currentToken].type == TokenType.DOUBLE_EQUAL_OP) {
     currentToken++;
     dynamic value = E();
     // if(value is int || value is double)
