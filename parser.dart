@@ -20,16 +20,23 @@ List<Token> tokens = [
   Token(" Parajuli", TokenType.STRING_LITERAL),
   Token(")", TokenType.CLOSE_PAREN),
   Token(";", TokenType.SEMICOLON),
+  Token("var", TokenType.VAR),
+  Token("y", TokenType.IDENTIFIER),
+  Token("=", TokenType.ASSIGN_OP),
+  Token("true", TokenType.BOOL_LITERAL),
+  Token("or", TokenType.OR_OP),
+  Token("false", TokenType.BOOL_LITERAL),
+  Token(";", TokenType.SEMICOLON),
 ];
 
 /*
 S -> StatementList
 StatementList -> Stmt StmtList | ε
-Stmt -> V | A | E 
+Stmt -> V | A | E  
 V -> var id = E;
 A -> id = E;
-E -> value R | (E) R | id R
-R -> + E R | - E R | * E R | ε
+E -> value R | (E) R | id R 
+R -> + E R | - E R | * E R | and E R | or E R | ε
 */
 
 void moveAheadByCheck(TokenType type) {
@@ -89,7 +96,8 @@ dynamic E() {
   TokenType tt = tokens[currentToken].type;
   if (tt == TokenType.INTEGER_LITERAL ||
       tt == TokenType.FLOAT_LITERAL ||
-      tt == TokenType.STRING_LITERAL) {
+      tt == TokenType.STRING_LITERAL ||
+      tt == TokenType.BOOL_LITERAL) {
     // Handle integer literal
     switch (tt) {
       case TokenType.INTEGER_LITERAL:
@@ -100,6 +108,9 @@ dynamic E() {
         break;
       case TokenType.STRING_LITERAL:
         value = tokens[currentToken].lexeme;
+        break;
+      case TokenType.BOOL_LITERAL:
+        value = bool.parse(tokens[currentToken].lexeme);
         break;
       default:
         value = tokens[currentToken].lexeme;
@@ -146,6 +157,18 @@ dynamic R(dynamic inhValue) {
     dynamic value = E();
     // if(value is int || value is double)
     synValue = inhValue * value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.AND_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue && value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.OR_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue || value;
     return R(synValue);
   }
 
