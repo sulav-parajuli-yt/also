@@ -1,0 +1,5 @@
+// AUTHOR impsike
+// Also supports following operators
+//   + - * and or == != ()
+var x = (2 + 2) * 2
+print x

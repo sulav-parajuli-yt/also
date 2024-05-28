@@ -11,7 +11,7 @@ void A() {
   List<int> indices = parseArrayAccess();
   moveAheadByCheck(TokenType.ASSIGN_OP);
   dynamic value = E();
-  moveAheadByCheck(TokenType.SEMICOLON);
+  // moveAheadByCheck(TokenType.SEMICOLON);
 
   if (symbolTable["main"]!.containsKey(id)) {
     if (indices.isNotEmpty) {

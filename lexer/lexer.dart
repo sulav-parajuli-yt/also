@@ -27,6 +27,10 @@ class Lexer {
       case ')':
         _addToken(TokenType.CLOSE_PAREN);
         break;
+      case '!':
+        c += _advance();
+        _addToken(TokenType.NOT_EQUAL_OP);
+        break;
       case '{':
         _addToken(TokenType.OPEN_BRACE);
         break;
@@ -51,9 +55,6 @@ class Lexer {
         } else {
           _addToken(TokenType.DIV_OP);
         }
-        break;
-      case ';':
-        _addToken(TokenType.SEMICOLON);
         break;
       case '=':
         _addToken(
@@ -184,6 +185,8 @@ class Lexer {
     'elseif': TokenType.ELSEIF,
     'while': TokenType.WHILE,
     'print': TokenType.PRINT,
+    'true': TokenType.BOOL_LITERAL,
+    'false': TokenType.BOOL_LITERAL,
     'return': TokenType.RETURN,
     'function': TokenType.FUNCTION,
   };

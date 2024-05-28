@@ -1,4 +1,4 @@
-var arr[3] = [0, 2, 3];
-var x[5] = #;
+var arr[3] = [0, 2, 3]
+var x[5] = #
 
 print arr[2]

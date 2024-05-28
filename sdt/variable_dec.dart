@@ -15,7 +15,7 @@ void V() {
   // checking empty array
   if (tokens[currentToken].type == TokenType.EMPTY_ARRAY) {
     moveAheadByCheck(TokenType.EMPTY_ARRAY);
-    moveAheadByCheck(TokenType.SEMICOLON);
+    // moveAheadByCheck(TokenType.SEMICOLON);
     if (dimensions.isNotEmpty) {
       symbolTable["main"]![id] = createArray(dimensions, null);
     } else {
@@ -23,7 +23,7 @@ void V() {
     }
   } else {
     dynamic value = E();
-    moveAheadByCheck(TokenType.SEMICOLON);
+    // moveAheadByCheck(TokenType.SEMICOLON);
 
     if (dimensions.isNotEmpty) {
       symbolTable["main"]![id] = createArray(dimensions, value);

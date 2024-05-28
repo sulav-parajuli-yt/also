@@ -1,9 +1,9 @@
 // AUTHOR impsike
 // Hello World Example
 
-var x = 10;
+var x = 10
 print x
 
 // we can also change the value of variable at runtime
-x = 25;
+x = 25
 print x

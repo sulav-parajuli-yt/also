@@ -1,0 +1,16 @@
+// Create an empty array of size 5
+var x[5] = #
+x[2] = 20
+print x[2]
+
+// or create an array by distinct value
+var y[3] = [2, 5, 8]
+print y[2]
+
+// Array loop example
+var m[3] = [2, 6, 9]
+var c = 0
+while(c != 3) {
+    print m[c]
+    c = c + 1
+}

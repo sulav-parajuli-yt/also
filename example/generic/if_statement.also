@@ -1,0 +1,10 @@
+// AUTHOR impsike
+// 
+
+if(false) {
+    print "Hello"
+} elseif(true) {
+    print "Hi"
+} else {
+    print "Hey"
+}

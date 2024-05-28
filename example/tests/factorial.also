@@ -1,9 +1,0 @@
-function fact(n) {
-    if ( n == 5 ) {
-        return 5
-    }
-    return 6
-}
-
-var x = fact(5);
-print x
