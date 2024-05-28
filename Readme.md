@@ -16,13 +16,13 @@ StatementList -> Stmt StmtList | ε
 Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef 
 PrintStmt -> print E
 ReturnStmt -> return E
-V -> var id = E;
-A -> id = E;
+V -> var id = E; | var id ArrayDims = E;  <--- ya change chha
+A -> id = E; | id ArrayAccess = E;  <--- ya change chha
 IfStmt -> if (E) { StatementList } ElseIfStmt
 ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ε
 Else ->  else { StatementList } | ε
 WhileStmt -> while (E) { StatementList }
-E -> value R | (E) R | id R | FuncCall
+E -> value R | (E) R | id R | FuncCall | ArrayLiteral   <--- ya change chha
 R -> + E R | - E R | * E R | and E R | or E R | == E R | != E R ε
 FuncDef -> function id (Params) { StatementList }
 Params -> id ParamsTail | ε
@@ -30,4 +30,11 @@ ParamsTail -> , id ParamsTail | ε
 FuncCall -> id (Args)
 Args -> E ArgsTail | ε
 ArgsTail -> , E ArgsTail | ε
+
+// ya dekhy add vako
+ArrayDims -> [value] ArrayDims | ε
+ArrayAccess -> [E] ArrayAccess | ε
+ArrayLiteral -> [ArrayElements]
+ArrayElements -> E ArrayElementsTail | ε
+ArrayElementsTail -> , E ArrayElementsTail | ε
 ```

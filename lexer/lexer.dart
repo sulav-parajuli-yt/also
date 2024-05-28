@@ -1,4 +1,3 @@
-
 import '../tokens.dart';
 
 class Lexer {
@@ -47,7 +46,11 @@ class Lexer {
         _addToken(TokenType.MUL_OP);
         break;
       case '/':
-        _addToken(TokenType.DIV_OP);
+        if (_match('/')) {
+          _skipSingleLineComment();
+        } else {
+          _addToken(TokenType.DIV_OP);
+        }
         break;
       case ';':
         _addToken(TokenType.SEMICOLON);
@@ -55,6 +58,15 @@ class Lexer {
       case '=':
         _addToken(
             _match('=') ? TokenType.DOUBLE_EQUAL_OP : TokenType.ASSIGN_OP);
+        break;
+      case '#':
+        _addToken(TokenType.EMPTY_ARRAY);
+        break;
+      case '[':
+        _addToken(TokenType.OPEN_BRACKET);
+        break;
+      case ']':
+        _addToken(TokenType.CLOSE_BRACKET);
         break;
       default:
         if (_isAlpha(c)) {
@@ -111,9 +123,11 @@ class Lexer {
     return _source[_current + 1];
   }
 
-  void _addToken(TokenType type) {
-    var text = _source.substring(_start, _current);
-    _tokens.add(Token(text, type));
+  void _addToken(TokenType type, {String? text}) {
+    if (text == null) {
+      text = _source.substring(_start, _current);
+    }
+    _tokens.add(Token(text, type, 1));
   }
 
   void _identifier() {
@@ -154,7 +168,13 @@ class Lexer {
 
     // Trim the surrounding quotes.
     var value = _source.substring(_start + 1, _current - 1);
-    _addToken(TokenType.STRING_LITERAL);
+    _addToken(TokenType.STRING_LITERAL, text: value);
+  }
+
+  void _skipSingleLineComment() {
+    while (_peek() != '\n' && !_isAtEnd()) {
+      _advance();
+    }
   }
 
   static final Map<String, TokenType> _keywords = {

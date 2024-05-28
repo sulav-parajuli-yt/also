@@ -1,12 +1,18 @@
 import 'additionals.dart';
 import '../tokens.dart';
 import 'expression.dart';
-import 'parser.dart';
 
 void PrintStmt() {
-  printK("Statement: ${tokens[currentToken]}");
-
-  moveAheadByCheck(TokenType.PRINT);
-  var result = E();
-  print(result);
+  moveAheadByCheck(TokenType.PRINT); // Consume 'print'
+  dynamic value = E(); // Parse expression to print
+  // if (value is List) {
+  //   // If value is an array, print each element
+  //   for (dynamic element in value) {
+  //     print(element);
+  //   }
+  // } else {
+    // Regular print statement
+    print(value);
+  // }
+  // moveAheadByCheck(TokenType.SEMICOLON); // Ensure statement ends with ';'
 }

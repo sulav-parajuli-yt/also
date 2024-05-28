@@ -13,6 +13,8 @@ enum TokenType {
   OPEN_BRACE,
   CLOSE_BRACE,
 
+  EMPTY_ARRAY,
+
   VAR,
   IDENTIFIER,
   ASSIGN_OP,
@@ -20,6 +22,8 @@ enum TokenType {
   WHILE,
   ELSE,
   ELSEIF,
+  OPEN_BRACKET,
+  CLOSE_BRACKET,
 
   // operators
   ADD_OP,
@@ -40,8 +44,9 @@ enum TokenType {
 class Token {
   String lexeme;
   TokenType type;
+  int lineNo;
 
-  Token(this.lexeme, this.type);
+  Token(this.lexeme, this.type, this.lineNo);
 
   @override
   String toString() {

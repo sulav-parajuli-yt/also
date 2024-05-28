@@ -1,5 +1,5 @@
-
 import 'additionals.dart';
+import 'array.dart';
 import 'fn_defn.dart';
 import 'parser.dart';
 import '../tokens.dart';
@@ -35,14 +35,38 @@ dynamic E() {
     // fn call
     return FuncCall();
   } else if (tokens[currentToken].type == TokenType.IDENTIFIER) {
-    // lookup
-    value = symbolTable[currentScope]![tokens[currentToken].lexeme];
+    String id = tokens[currentToken].lexeme;
     currentToken++;
+    if (tokens.length > currentToken && tokens[currentToken].type == TokenType.OPEN_BRACKET) {
+      // Array access
+      currentToken++; // Move past '['
+      List<int> indices = [];
+      indices.add(E()); // Parse index
+      moveAheadByCheck(TokenType.CLOSE_BRACKET); // Ensure closing ']'
+      if (tokens.length > currentToken && tokens[currentToken].type == TokenType.ASSIGN_OP) {
+        // Array update
+        currentToken++; // Move past '='
+        dynamic newValue = E(); // Parse new value
+        // Update array element
+        updateArrayElement(id, indices, newValue);
+        return newValue;
+      } else {
+        // Array element access
+        dynamic arrayValue = symbolTable[currentScope]![id];
+        return getArrayElement(arrayValue, indices);
+      }
+    } else {
+      // Regular variable lookup
+      value = symbolTable[currentScope]![id];
+    }
   } else if (tokens[currentToken].type == TokenType.OPEN_PAREN) {
     // Handle parenthesized expression
     currentToken++; // Skip '('
     value = E(); // Recursively parse the expression inside the parentheses
     moveAheadByCheck(TokenType.CLOSE_PAREN); // Ensure the closing ')'
+  } else if (tokens[currentToken].type == TokenType.OPEN_BRACKET) {
+    // Array literal
+    return parseArrayLiteral();
   } else {
     throw Exception("Parsing Error: Unexpected token ${tokens[currentToken]}");
   }
