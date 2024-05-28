@@ -1,8 +1,8 @@
 import 'additionals.dart';
 import 'expression.dart';
 import 'parser.dart';
-import 'statement_list.dart';
 import '../tokens.dart';
+import 'statement_list.dart';
 
 class FunctionDefinition {
   final List<String> parameters;
@@ -35,7 +35,15 @@ void FuncDef() {
   moveAheadByCheck(TokenType.OPEN_BRACE);
   // Parse function body
   List<Token> functionBodyTokens = [];
-  while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+  int noOfOpenedBrace = 0;
+  while (noOfOpenedBrace != 0 || tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+    // we have to check the brace count here 
+    if(tokens[currentToken].type == TokenType.OPEN_BRACE) {
+      noOfOpenedBrace += 1;
+    }
+    if(tokens[currentToken].type == TokenType.CLOSE_BRACE) {
+      noOfOpenedBrace -= 1;
+    }
     functionBodyTokens.add(tokens[currentToken]);
     currentToken++;
   }
@@ -43,6 +51,7 @@ void FuncDef() {
   // Store function definition in symbol table
   symbolTable[currentScope]![functionName] =
       FunctionDefinition(parameters, functionBodyTokens);
+  printK(symbolTable);
 }
 
 dynamic FuncCall() {
@@ -79,6 +88,8 @@ dynamic executeFunction(String functionName, List<dynamic> arguments) {
 
   symbolTable[currentScope] = functionScope;
 
+  // print(symbolTable);
+
   // currentScope = functionName; // Update current scope to function's scope
   executeStatements(funcDef.functionBodyTokens);
   // currentScope = "main"; // Restore current scope
@@ -92,6 +103,6 @@ void executeStatements(List<Token> tokens2) {
   List<Token> tokensTemp = tokens;
   tokens = tokens2;
   StatementList();
-  currentToken = savedTokenIndex;
   tokens = tokensTemp;
+  currentToken = savedTokenIndex;
 }

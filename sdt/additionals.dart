@@ -9,7 +9,7 @@ void moveAheadByCheck(TokenType type) {
   }
 }
 
-void printK(String v) {
+void printK(dynamic v) {
   // print(v);
 }
 
