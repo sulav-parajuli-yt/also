@@ -3,7 +3,7 @@ import 'expression.dart';
 import 'fn_defn.dart';
 import 'ifelseladder.dart';
 import 'parser.dart';
-import 'print_statement.dart';
+import 'library_stmt.dart';
 import 'return_statement.dart';
 import '../shared/tokens.dart';
 import 'variable_assign.dart';
@@ -18,7 +18,7 @@ void Stmt() {
   } else if (tokens[currentToken].type == TokenType.WHILE) {
     WhileStmt();
   } else if (tokens[currentToken].type == TokenType.PRINT) {
-    PrintStmt();
+    LibraryFuncStmt();
   } else if (tokens[currentToken].type == TokenType.RETURN) {
     ReturnStmt();
   } else if (tokens[currentToken].type == TokenType.FUNCTION) {

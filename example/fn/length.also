@@ -1,0 +1,10 @@
+var x = 25
+var name = "sulav"
+print length(name)
+
+
+var x[5] = #
+print length(x)
+
+var m[3] = [2, 6, 9]
+print length(m)

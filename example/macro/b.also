@@ -1,4 +1,5 @@
 $include "c.also"
+$include "d.also"
 
 function b() {
     print "Hello"

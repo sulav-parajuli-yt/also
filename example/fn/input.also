@@ -1,0 +1,2 @@
+var x = input() // asks user input and store that in x
+print x // prints the value of x

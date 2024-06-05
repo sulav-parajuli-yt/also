@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'additionals.dart';
 import 'expression.dart';
+import '../shared/lib_fns.dart';
 import 'parser.dart';
 import '../shared/tokens.dart';
 import 'statement_list.dart';
@@ -79,7 +82,8 @@ dynamic executeFunction(String functionName, List<dynamic> arguments) {
   // Retrieve function definition from symbol table
   FunctionDefinition? funcDef = allFunctions[functionName];
   if (funcDef == null) {
-    throw Exception("Function $functionName not defined");
+    // aava ya huncha magic
+    return callFunction(functionName, arguments);
   }
   // Create a new symbol table for the function's scope
   Map<String, dynamic> functionScope = {};
@@ -97,11 +101,10 @@ dynamic executeFunction(String functionName, List<dynamic> arguments) {
   executeStatements(funcDef.functionBodyTokens);
   // currentScope = "main"; // Restore current scope
   symbolTable[currentScope] = previousScope; // Restore previous symbol table
-  return returnCount == 1 ? functionReturnStack.removeAt(0): 0;
+  return returnCount == 1 ? functionReturnStack.removeAt(0) : 0;
 }
 
-// TODO: need to remove this
-int returnCount = 0;
+
 
 void executeStatements(List<Token> tokens2) {
   returnCount = 0;

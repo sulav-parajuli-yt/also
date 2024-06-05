@@ -145,17 +145,26 @@ class Lexer {
     _addToken(type);
   }
 
-  void _number() {
+void _number() {
+  while (_isDigit(_peek())) _advance();
+
+  bool isFloat = false;
+
+  if (_peek() == '.' && _isDigit(_peekNext())) {
+    isFloat = true;
+    _advance(); // Consume the '.'
+
     while (_isDigit(_peek())) _advance();
+  }
 
-    if (_peek() == '.' && _isDigit(_peekNext())) {
-      _advance();
-      while (_isDigit(_peek())) _advance();
-    }
-
-    var text = _source.substring(_start, _current);
+  var text = _source.substring(_start, _current);
+  if (isFloat) {
+    _addToken(TokenType.FLOAT_LITERAL);
+  } else {
     _addToken(TokenType.INTEGER_LITERAL);
   }
+}
+
 
   void _string() {
     while (_peek() != '"' && !_isAtEnd()) {

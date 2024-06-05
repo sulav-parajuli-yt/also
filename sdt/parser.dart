@@ -6,6 +6,8 @@ String currentScope = "main";
 List<dynamic> functionReturnStack = [];
 
 int currentToken = 0;
+// to keep track of returns; if one return encountered ignore rest of statements
+int returnCount = 0;
 
 void compile() {
   currentToken = 0;

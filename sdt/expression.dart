@@ -89,7 +89,11 @@ dynamic R(dynamic inhValue) {
   if (tokens[currentToken].type == TokenType.ADD_OP) {
     currentToken++;
     dynamic value = E();
-    synValue = inhValue + value;
+    if (value.runtimeType != inhValue.runtimeType) {
+      synValue = inhValue.toString() + value.toString();
+    } else {
+      synValue = inhValue + value;
+    }
     return R(synValue);
   } else if (tokens[currentToken].type == TokenType.MINUS_OP) {
     currentToken++;
