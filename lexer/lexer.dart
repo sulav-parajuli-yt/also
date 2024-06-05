@@ -1,4 +1,4 @@
-import '../tokens.dart';
+import '../shared/tokens.dart';
 
 class Lexer {
   final String _source;
@@ -48,6 +48,12 @@ class Lexer {
         break;
       case '*':
         _addToken(TokenType.MUL_OP);
+        break;
+      case '<':
+        _addToken(_match('=') ? TokenType.SMLTHN_EQ_OP : TokenType.SMLTHN_OP);
+        break;
+      case '>':
+        _addToken(_match('=') ? TokenType.GRTHN_EQ_OP : TokenType.GRTHN_OP);
         break;
       case '/':
         if (_match('/')) {

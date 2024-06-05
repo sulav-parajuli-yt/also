@@ -1,7 +1,7 @@
 import 'additionals.dart';
 import 'expression.dart';
 import 'parser.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 import 'statement_list.dart';
 
 Map<String, FunctionDefinition> allFunctions = {};

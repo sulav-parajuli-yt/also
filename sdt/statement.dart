@@ -5,7 +5,7 @@ import 'ifelseladder.dart';
 import 'parser.dart';
 import 'print_statement.dart';
 import 'return_statement.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 import 'variable_assign.dart';
 import 'variable_dec.dart';
 import 'while_loop.dart';

@@ -2,7 +2,7 @@ import 'additionals.dart';
 import 'array.dart';
 import 'fn_defn.dart';
 import 'parser.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 
 dynamic E() {
   dynamic value;
@@ -37,13 +37,15 @@ dynamic E() {
   } else if (tokens[currentToken].type == TokenType.IDENTIFIER) {
     String id = tokens[currentToken].lexeme;
     currentToken++;
-    if (tokens.length > currentToken && tokens[currentToken].type == TokenType.OPEN_BRACKET) {
+    if (tokens.length > currentToken &&
+        tokens[currentToken].type == TokenType.OPEN_BRACKET) {
       // Array access
       currentToken++; // Move past '['
       List<int> indices = [];
       indices.add(E()); // Parse index
       moveAheadByCheck(TokenType.CLOSE_BRACKET); // Ensure closing ']'
-      if (tokens.length > currentToken && tokens[currentToken].type == TokenType.ASSIGN_OP) {
+      if (tokens.length > currentToken &&
+          tokens[currentToken].type == TokenType.ASSIGN_OP) {
         // Array update
         currentToken++; // Move past '='
         dynamic newValue = E(); // Parse new value
@@ -123,6 +125,30 @@ dynamic R(dynamic inhValue) {
     dynamic value = E();
     // if(value is int || value is double)
     synValue = inhValue != value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.GRTHN_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue > value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.GRTHN_EQ_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue >= value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.SMLTHN_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue < value;
+    return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.SMLTHN_EQ_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue <= value;
     return R(synValue);
   }
 

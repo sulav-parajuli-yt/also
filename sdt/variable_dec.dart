@@ -2,7 +2,7 @@ import 'additionals.dart';
 import 'array.dart';
 import 'expression.dart';
 import 'parser.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 
 void V() {
   moveAheadByCheck(TokenType.VAR);

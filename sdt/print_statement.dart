@@ -1,5 +1,5 @@
 import 'additionals.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 import 'expression.dart';
 
 void PrintStmt() {

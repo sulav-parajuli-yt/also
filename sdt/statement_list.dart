@@ -2,7 +2,7 @@ import 'additionals.dart';
 import 'fn_defn.dart';
 import 'parser.dart';
 import 'statement.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 
 void StatementList() {
   while (currentToken < tokens.length &&

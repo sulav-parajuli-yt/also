@@ -4,7 +4,7 @@ import 'dart:io';
 import 'lexer/lexer.dart';
 import 'sdt/additionals.dart';
 import 'sdt/parser.dart';
-import 'tokens.dart';
+import 'shared/tokens.dart';
 
 void main(List<String> arguments) {
   if (arguments.length != 1) {

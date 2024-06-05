@@ -34,6 +34,10 @@ enum TokenType {
   OR_OP,
   DOUBLE_EQUAL_OP,
   NOT_EQUAL_OP,
+  GRTHN_OP,
+  GRTHN_EQ_OP,
+  SMLTHN_OP,
+  SMLTHN_EQ_OP,
 
   COMMA,
   RETURN,

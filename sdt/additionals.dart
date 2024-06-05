@@ -1,5 +1,5 @@
 import 'parser.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 
 void moveAheadByCheck(TokenType type) {
   if (tokens[currentToken].type == type) {

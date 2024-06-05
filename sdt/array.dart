@@ -1,4 +1,4 @@
-import '../tokens.dart';
+import '../shared/tokens.dart';
 import 'additionals.dart';
 import 'expression.dart';
 import 'parser.dart';

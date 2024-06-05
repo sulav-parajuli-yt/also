@@ -2,7 +2,7 @@ import 'additionals.dart';
 import 'expression.dart';
 import 'parser.dart';
 import 'statement_list.dart';
-import '../tokens.dart';
+import '../shared/tokens.dart';
 
 void WhileStmt() {
   // WhileStmt -> while (E) { StatementList }
