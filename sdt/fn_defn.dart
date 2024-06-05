@@ -36,12 +36,13 @@ void FuncDef() {
   // Parse function body
   List<Token> functionBodyTokens = [];
   int noOfOpenedBrace = 0;
-  while (noOfOpenedBrace != 0 || tokens[currentToken].type != TokenType.CLOSE_BRACE) {
-    // we have to check the brace count here 
-    if(tokens[currentToken].type == TokenType.OPEN_BRACE) {
+  while (noOfOpenedBrace != 0 ||
+      tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+    // we have to check the brace count here
+    if (tokens[currentToken].type == TokenType.OPEN_BRACE) {
       noOfOpenedBrace += 1;
     }
-    if(tokens[currentToken].type == TokenType.CLOSE_BRACE) {
+    if (tokens[currentToken].type == TokenType.CLOSE_BRACE) {
       noOfOpenedBrace -= 1;
     }
     functionBodyTokens.add(tokens[currentToken]);
@@ -97,12 +98,18 @@ dynamic executeFunction(String functionName, List<dynamic> arguments) {
   return functionReturnStack.removeAt(0);
 }
 
+// TODO: need to remove this
+int returnCount = 0;
+
 void executeStatements(List<Token> tokens2) {
+  returnCount = 0;
   int savedTokenIndex = currentToken;
   currentToken = 0;
   List<Token> tokensTemp = tokens;
   tokens = tokens2;
+  // print(tokens);
   StatementList();
+  returnCount = 0;
   tokens = tokensTemp;
   currentToken = savedTokenIndex;
 }

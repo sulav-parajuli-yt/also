@@ -6,14 +6,20 @@ function sum(m, n) {
 
 // A function that calculates sum, difference
 function sumOrDiff(a,b,what) {
-    var output = 0
     if(what == 1) {
-        output = a + b
+        return a + b
     } else {
-        output = a - b
+        return a - b
     }
-    return output
 }
 
-var xz = sumOrDiff(15, 9, 2)
+// Function returning multiple thing, first return should end the function
+function hehe(a,b,what) {
+        return a + b
+        return a * b
+        return a * b
+        return a - b
+}
+
+var xz = hehe(15, 9, 1)
 print xz
