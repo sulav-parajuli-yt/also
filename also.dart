@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'lexer/lexer.dart';
+import 'macro.dart';
 import 'sdt/additionals.dart';
 import 'sdt/parser.dart';
 import 'shared/tokens.dart';
@@ -12,15 +13,7 @@ void main(List<String> arguments) {
     return;
   }
 
-  // Read the file contents
-  File file = File(arguments[0]);
-
-  if (!file.existsSync()) {
-    print('File not found: ${arguments[0]}');
-    return;
-  }
-
-  String sourceCode = file.readAsStringSync(encoding: utf8);
+  String sourceCode = macro(arguments[0]);
 
   // Create a lexer instance
   Lexer lexer = Lexer(sourceCode.toString() + " ");

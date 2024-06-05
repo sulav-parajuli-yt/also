@@ -10,6 +10,7 @@ ALSO is a language that supports following:
 8. File IO
 
 ## Current Language Grammar
+```
 S -> StatementList
 StatementList -> Stmt StmtList | ε
 Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef 
@@ -34,3 +35,4 @@ ArrayAccess -> [E] ArrayAccess | ε
 ArrayLiteral -> [ArrayElements]
 ArrayElements -> E ArrayElementsTail | ε
 ArrayElementsTail -> , E ArrayElementsTail | ε
+```
