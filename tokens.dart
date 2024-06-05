@@ -50,6 +50,6 @@ class Token {
 
   @override
   String toString() {
-    return "( " + this.lexeme + " - " + this.type.name + " )";
+    return "( " + this.lexeme + " - " + this.type.name + " )" + "at line ${this.lineNo}";
   }
 }

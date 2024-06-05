@@ -9,6 +9,7 @@ void IfStmt() {
   moveAheadByCheck(TokenType.IF);
   moveAheadByCheck(TokenType.OPEN_PAREN);
   var result = E();
+  // print(result);
   moveAheadByCheck(TokenType.CLOSE_PAREN);
   moveAheadByCheck(TokenType.OPEN_BRACE);
   if (result) {
@@ -21,10 +22,22 @@ void IfStmt() {
       skipBlock();
     }
   } else {
-    while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
-      currentToken++;
+    int countOfOpenBraces = 0;
+    while (tokens[currentToken].type != TokenType.CLOSE_BRACE ||
+        countOfOpenBraces != 0) {
+      if (tokens[currentToken].type == TokenType.OPEN_BRACE) {
+        countOfOpenBraces += 1;
+        currentToken++;
+      } else if (tokens[currentToken].type == TokenType.CLOSE_BRACE &&
+          countOfOpenBraces != 0) {
+        countOfOpenBraces -= 1;
+        currentToken++;
+      } else {
+        currentToken++;
+      }
     }
     moveAheadByCheck(TokenType.CLOSE_BRACE);
+    // print(tokens[currentToken]);
     ElseIfStmt();
   }
 }
@@ -48,9 +61,21 @@ void ElseIfStmt() {
         skipBlock();
       }
     } else {
-      while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
-        currentToken++;
+      int countOfOpenBraces = 0;
+      while (tokens[currentToken].type != TokenType.CLOSE_BRACE ||
+          countOfOpenBraces != 0) {
+        if (tokens[currentToken].type == TokenType.OPEN_BRACE) {
+          countOfOpenBraces += 1;
+          currentToken++;
+        } else if (tokens[currentToken].type == TokenType.CLOSE_BRACE &&
+            countOfOpenBraces != 0) {
+          countOfOpenBraces -= 1;
+          currentToken++;
+        } else {
+          currentToken++;
+        }
       }
+
       moveAheadByCheck(TokenType.CLOSE_BRACE);
       ElseIfStmt();
     }

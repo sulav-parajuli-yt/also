@@ -1,10 +1,37 @@
 // AUTHOR impsike
-// 
 
-if(false) {
-    print "Hello"
-} elseif(true) {
-    print "Hi"
+if (false) {
+    print "Hello, this is unreachable"
+} elseif (false) {
+    print "Hi, this is also unreachable"
+    if (true) {
+        print "2nd, this is reachable"
+        if (true) {
+            print "3nd, this is also reachable"
+        } elseif (false) {
+            print "Mann, this is unreachable"
+        } else {
+            print "Hey inner, this is also reachable"
+        }
+    } elseif (false) {
+        print "Mann, this is unreachable"
+    } else {
+        print "Hey inner, this is unreachable"
+    }
 } else {
-    print "Hey"
+    print "Hey Outer, this is reachable"
+    if (true) {
+        print "ELSE 2nd, this is also reachable"
+        if (false) {
+            print "ELSE 3nd, this is unreachable"
+        } elseif (true) {
+            print "ELSE Mann Mann, this is also reachable"
+        } else {
+            print "ELSE Hey inner, this is also reachable"
+        }
+    } elseif (false) {
+        print "ELSE Mann, this is unreachable"
+    } else {
+        print "ELSE Hey inner, this is unreachable"
+    }
 }

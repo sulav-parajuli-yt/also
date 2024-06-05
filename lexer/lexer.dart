@@ -128,7 +128,7 @@ class Lexer {
     if (text == null) {
       text = _source.substring(_start, _current);
     }
-    _tokens.add(Token(text, type, 1));
+    _tokens.add(Token(text, type, _tokens.length + 1));
   }
 
   void _identifier() {
