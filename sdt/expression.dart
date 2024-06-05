@@ -106,6 +106,12 @@ dynamic R(dynamic inhValue) {
     // if(value is int || value is double)
     synValue = inhValue * value;
     return R(synValue);
+  } else if (tokens[currentToken].type == TokenType.MOD_OP) {
+    currentToken++;
+    dynamic value = E();
+    // if(value is int || value is double)
+    synValue = inhValue % value;
+    return R(synValue);
   } else if (tokens[currentToken].type == TokenType.AND_OP) {
     currentToken++;
     dynamic value = E();

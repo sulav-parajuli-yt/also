@@ -1,0 +1,3 @@
+// readFile, writeFile, appendFile
+var x = readFile("README.md")
+print(x)

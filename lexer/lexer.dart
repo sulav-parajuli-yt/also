@@ -69,6 +69,9 @@ class Lexer {
       case '#':
         _addToken(TokenType.EMPTY_ARRAY);
         break;
+      case '%':
+        _addToken(TokenType.MOD_OP);
+        break;
       case '[':
         _addToken(TokenType.OPEN_BRACKET);
         break;
@@ -145,26 +148,25 @@ class Lexer {
     _addToken(type);
   }
 
-void _number() {
-  while (_isDigit(_peek())) _advance();
-
-  bool isFloat = false;
-
-  if (_peek() == '.' && _isDigit(_peekNext())) {
-    isFloat = true;
-    _advance(); // Consume the '.'
-
+  void _number() {
     while (_isDigit(_peek())) _advance();
-  }
 
-  var text = _source.substring(_start, _current);
-  if (isFloat) {
-    _addToken(TokenType.FLOAT_LITERAL);
-  } else {
-    _addToken(TokenType.INTEGER_LITERAL);
-  }
-}
+    bool isFloat = false;
 
+    if (_peek() == '.' && _isDigit(_peekNext())) {
+      isFloat = true;
+      _advance(); // Consume the '.'
+
+      while (_isDigit(_peek())) _advance();
+    }
+
+    var text = _source.substring(_start, _current);
+    if (isFloat) {
+      _addToken(TokenType.FLOAT_LITERAL);
+    } else {
+      _addToken(TokenType.INTEGER_LITERAL);
+    }
+  }
 
   void _string() {
     while (_peek() != '"' && !_isAtEnd()) {
@@ -197,6 +199,8 @@ void _number() {
     'var': TokenType.VAR,
     'if': TokenType.IF,
     'else': TokenType.ELSE,
+    'and': TokenType.AND_OP,
+    'or': TokenType.OR_OP,
     'elseif': TokenType.ELSEIF,
     'while': TokenType.WHILE,
     'print': TokenType.PRINT,

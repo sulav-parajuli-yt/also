@@ -38,6 +38,7 @@ enum TokenType {
   GRTHN_EQ_OP,
   SMLTHN_OP,
   SMLTHN_EQ_OP,
+  MOD_OP,
 
   COMMA,
   RETURN,

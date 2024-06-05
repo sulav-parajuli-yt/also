@@ -2,11 +2,37 @@ import 'dart:io';
 
 typedef DynamicFunction = dynamic Function(List<dynamic>);
 
-
 Map<String, DynamicFunction> functionMap = {
+  "readFile": (arguments) {
+    if (arguments.length != 1) {
+      throw Exception("Function readFile takes exactly one argument");
+    }
+    String filePath = arguments[0].toString();
+    return File(filePath).readAsStringSync();
+  },
+  "writeFile": (arguments) {
+    if (arguments.length != 2) {
+      throw Exception("Function writeFile takes exactly two arguments");
+    }
+    String filePath = arguments[0].toString();
+    String content = arguments[1].toString().replaceAll(r"\n", "\n");
+    File(filePath).writeAsStringSync(content);
+    return null;
+  },
+  "appendFile": (arguments) {
+    if (arguments.length != 2) {
+      throw Exception("Function appendFile takes exactly two arguments");
+    }
+    String filePath = arguments[0].toString();
+    String content = arguments[1].toString().replaceAll(r"\n", "\n");
+    File(filePath).writeAsStringSync(content, mode: FileMode.append);
+    return null;
+  },
   "input": (arguments) {
-    if (arguments.isNotEmpty) {
-      throw Exception("Function input does not take arguments");
+    if (arguments.length == 1) {
+      print(arguments[0]);
+    } else if (arguments.length > 1) {
+      throw Exception("Function input may have at most 1 argument");
     }
     return stdin.readLineSync();
   },
@@ -17,6 +43,18 @@ Map<String, DynamicFunction> functionMap = {
     return arguments[0].runtimeType == List
         ? arguments[0].length
         : arguments[0].toString().length;
+  },
+  "pos": (arguments) {
+    if (arguments.length != 2) {
+      throw Exception("Function pos takes exactly two argument");
+    }
+    return arguments[0][arguments[1]];
+  },
+  "substr": (arguments) {
+    if (arguments.length != 3) {
+      throw Exception("Function substr takes exactly three argument");
+    }
+    return arguments[0].toString().substring(arguments[1], arguments[2]);
   },
   "typeof": (arguments) {
     if (arguments.length != 1) {
