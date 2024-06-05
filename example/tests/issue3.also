@@ -1,0 +1,20 @@
+// A function that adds 2 numbers
+function sum(m, n) {
+    print "Inside sum"
+    var t = m + n
+    return t
+}
+
+// A function that calculates sum, difference
+function sumOrDiff(a,b,what) {
+    var output = 0
+    if(what == 1) {
+        output = sum(a, b)
+    } else {
+        output = a - b
+    }
+    return output
+}
+
+var xz = sumOrDiff(15, 9, 1)
+print xz

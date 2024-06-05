@@ -17,7 +17,15 @@ void WhileStmt() {
     moveAheadByCheck(TokenType.CLOSE_BRACE);
     currentToken = pos;
   } else {
-    while (tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+    int noOfOpenedBrace = 0;
+    while (noOfOpenedBrace != 0 ||
+        tokens[currentToken].type != TokenType.CLOSE_BRACE) {
+      if (tokens[currentToken].type == TokenType.OPEN_BRACE) {
+        noOfOpenedBrace += 1;
+      }
+      if (tokens[currentToken].type == TokenType.CLOSE_BRACE) {
+        noOfOpenedBrace -= 1;
+      }
       currentToken++;
     }
     moveAheadByCheck(TokenType.CLOSE_BRACE);
