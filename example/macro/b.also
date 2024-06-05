@@ -1,4 +1,4 @@
-$include "c.also"
+$include "../fn/input.also"
 $include "d.also"
 
 function b() {

@@ -1,3 +1,6 @@
 var x = input() // asks user input and store that in x
 x = parseInt(x) // asks user input and store that in x
 print x // prints the value of x
+
+var m = typeof(x) // asks user input and store that in x
+print m // prints the value of x

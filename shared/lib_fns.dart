@@ -17,6 +17,12 @@ Map<String, DynamicFunction> functionMap = {
         ? arguments[0].length
         : arguments[0].toString().length;
   },
+  "typeof": (arguments) {
+    if (arguments.length != 1) {
+      throw Exception("Function typeof takes exactly one argument");
+    }
+    return arguments[0].runtimeType;
+  },
   "parseInt": (arguments) {
     if (arguments.length != 1) {
       throw Exception("Function parseInt takes exactly one argument");
