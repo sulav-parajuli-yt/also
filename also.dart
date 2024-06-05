@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'lexer/lexer.dart';
-import 'sdt/additionals.dart';
-import 'sdt/parser.dart';
+import 'sdt2/additionals.dart';
+import 'sdt2/parser.dart';
 import 'tokens.dart';
 
 void main(List<String> arguments) {

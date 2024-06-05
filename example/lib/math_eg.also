@@ -1,0 +1,4 @@
+import "math.also"
+
+var j = sum(2 ,3)
+print j

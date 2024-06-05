@@ -1,0 +1,25 @@
+{
+  "name": "also-highlighter",
+  "displayName": "Also Highlighter",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "also",
+      "aliases": ["Also", "also"],
+      "extensions": [".also",".al"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "also",
+      "scopeName": "source.also",
+      "path": "./syntaxes/also.tmLanguage.json"
+    }]
+  }
+}

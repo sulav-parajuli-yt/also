@@ -1,0 +1,7 @@
+function sum(m, n) {
+    return m+n
+}
+
+function difference(m, n) {
+    return m-n
+}
