@@ -9,6 +9,15 @@ ALSO is a language that supports following:
 7. Comments [Implement on lexer] [X]
 8. File IO
 
+## Lib Functions
+```js
+// input()
+// length(x) or length(array)
+// typeof(x)
+// parseInt("55")
+// parseFloat("55.55")
+```
+
 ## Current Language Grammar
 ```
 S -> StatementList

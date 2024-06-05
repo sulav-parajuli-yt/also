@@ -2,6 +2,7 @@ import 'dart:io';
 
 typedef DynamicFunction = dynamic Function(List<dynamic>);
 
+
 Map<String, DynamicFunction> functionMap = {
   "input": (arguments) {
     if (arguments.isNotEmpty) {
