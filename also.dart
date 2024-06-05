@@ -9,7 +9,7 @@ import 'shared/tokens.dart';
 
 void main(List<String> arguments) {
   if (arguments.length != 1) {
-    print('Usage: dart <script.dart> <file_path>');
+    print('Usage: also <file_path>');
     return;
   }
 
