@@ -1,0 +1,23 @@
+// A function that adds 2 numbers
+function a(m, n) {
+    // A function that calculates sum, difference
+
+    var t = m + n
+    // 15 + 9 = 24
+    print "A"
+    return b(t, n)
+}
+
+function b(c,b) {
+    print "B"
+    return l(c, b)
+}
+
+function l(c,b) {
+    print "C"
+    // 24 + 9 = 33
+    return c + b
+}
+
+var xz = a(15, 9)
+print xz

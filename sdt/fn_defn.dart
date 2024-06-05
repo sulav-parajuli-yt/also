@@ -4,6 +4,8 @@ import 'parser.dart';
 import '../tokens.dart';
 import 'statement_list.dart';
 
+Map<String, FunctionDefinition> allFunctions = {};
+
 class FunctionDefinition {
   final List<String> parameters;
   final List<Token> functionBodyTokens;
@@ -50,7 +52,7 @@ void FuncDef() {
   }
   moveAheadByCheck(TokenType.CLOSE_BRACE);
   // Store function definition in symbol table
-  symbolTable[currentScope]![functionName] =
+  allFunctions[functionName] =
       FunctionDefinition(parameters, functionBodyTokens);
   printK(symbolTable);
 }
@@ -75,7 +77,7 @@ dynamic FuncCall() {
 
 dynamic executeFunction(String functionName, List<dynamic> arguments) {
   // Retrieve function definition from symbol table
-  FunctionDefinition? funcDef = symbolTable[currentScope]![functionName];
+  FunctionDefinition? funcDef = allFunctions[functionName];
   if (funcDef == null) {
     throw Exception("Function $functionName not defined");
   }
