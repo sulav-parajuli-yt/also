@@ -9,10 +9,7 @@ void StatementList() {
       tokens[currentToken].type != TokenType.CLOSE_BRACE) {
     printK("Statement: ${tokens[currentToken]}");
     if (returnCount >= 1) {
-      // now need to pop all other statements from the code
       currentToken = tokens.length;
-      // print(currentScope)
-      // print(tokens);
       return;
     } else {
       Stmt();

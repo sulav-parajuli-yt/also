@@ -10,6 +10,8 @@ import 'variable_assign.dart';
 import 'variable_dec.dart';
 import 'while_loop.dart';
 
+
+// Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef 
 void Stmt() {
   if (tokens[currentToken].type == TokenType.VAR) {
     V();
@@ -18,7 +20,7 @@ void Stmt() {
   } else if (tokens[currentToken].type == TokenType.WHILE) {
     WhileStmt();
   } else if (tokens[currentToken].type == TokenType.PRINT) {
-    LibraryFuncStmt();
+    PrintStmt();
   } else if (tokens[currentToken].type == TokenType.RETURN) {
     ReturnStmt();
   } else if (tokens[currentToken].type == TokenType.FUNCTION) {

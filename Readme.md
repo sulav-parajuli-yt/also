@@ -7,7 +7,9 @@ ALSO is a language that supports following:
 5. Arrays [X]
 6. Built In Statements [ print ] [X]
 7. Comments [Implement on lexer] [X]
-8. File IO
+8. File IO [Read, write, append] [X]
+9. Built In Functions [ input, parseInt, parseFloat, readFile, writeFile, appendFile, length, elementAt, substr, typeof] [X]
+
 
 ## Lib Functions
 ```js
