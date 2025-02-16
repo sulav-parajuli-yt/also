@@ -2,6 +2,7 @@
 import 'statement_list.dart';
 
 Map<String, Map<String, dynamic>> symbolTable = {"main": {}};
+Map<String, List<String>> constantTable = {"main": []};
 String currentScope = "main";
 List<dynamic> functionReturnStack = [];
 

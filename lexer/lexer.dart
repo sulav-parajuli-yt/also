@@ -208,5 +208,6 @@ class Lexer {
     'false': TokenType.BOOL_LITERAL,
     'return': TokenType.RETURN,
     'function': TokenType.FUNCTION,
+    'const': TokenType.CONSTANT,
   };
 }

@@ -5,8 +5,16 @@ import 'parser.dart';
 import '../shared/tokens.dart';
 
 void V() {
-  moveAheadByCheck(TokenType.VAR);
+  bool constant = false;
+  // may be either a variable or a constant
+  if (tokens[currentToken].type == TokenType.VAR) {
+    moveAheadByCheck(TokenType.VAR);
+  } else {
+    moveAheadByCheck(TokenType.CONSTANT);
+    constant = true;
+  }
   String id = tokens[currentToken].lexeme;
+  if (constant) constantTable["main"]!.add(id);
   moveAheadByCheck(TokenType.IDENTIFIER);
 
   List<int> dimensions = parseArrayDims();
