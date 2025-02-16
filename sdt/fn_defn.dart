@@ -101,7 +101,7 @@ dynamic executeFunction(String functionName, List<dynamic> arguments) {
   executeStatements(funcDef.functionBodyTokens);
   // currentScope = "main"; // Restore current scope
   symbolTable[currentScope] = previousScope; // Restore previous symbol table
-  return returnCount <= 1 ? functionReturnStack.removeAt(0) : 0;
+  return returnCount >= 1 ? functionReturnStack.removeAt(0) : 0;
 }
 
 
