@@ -1,49 +1,94 @@
-# ALSO
-ALSO is a language that supports following:
-1. Functions [X]
-2. Variables [X]
-3. If..elseif...else ladder [X]
-4. while loop [X]
-5. Arrays [X]
-6. Built In Statements [ print ] [X]
-7. Comments [Implement on lexer] [X]
-8. File IO [Read, write, append] [X]
-9. Built In Functions [ input, parseInt, parseFloat, readFile, writeFile, appendFile, length, elementAt, substr, typeof] [X]
+# Also
+A hobby intrepreter langauge that can do a lot of things. Created as a part of course `CSC376 - Compiler Design and Construction`.
 
+# Language Design
+I have used a very simple approach and design for this language. The source code is feed to the Lexer as input which produce a list of tokens at the first scan. The token list is then passed into the Parser which evaluates the token while parsing. I have used the SDT(`Syntax Directed Translation`) parsing technique here.
 
-## Lib Functions
-```js
-// input()
-// length(x) or length(array)
-// typeof(x)
-// parseInt("55")
-// parseFloat("55.55")
+# Introduction to Also
+A simple, general purpose language.
+
+### Hello World
+Let's create a file called `helloworld.also` with following code:
+```
+print "Hello World"
+```
+The `print` statement prints whatever is in the Right Hand Side of it. It can print string, number, expressions, etc. Now to execute the above code, use following command:
+```
+also helloworld.also
+```
+This will run your code and you will see a `Hello World` prompt in the CLI.
+
+### Data Type, Variables and Constants
+To create a variable, we can use `var` keyword.
+```
+var x = 5
+// we can also create a constant
+const y = 5
+// variable can be reassigned
+x = 25
+// constant can not be
+y = 25 // errors
 ```
 
-## Current Language Grammar
+Also supports following data types:
+- Integer
+- Double
+- String
+- Array
+- Boolean
+
+We can use the `typeof` function to get the type of a variable or constants.
 ```
-S -> StatementList
-StatementList -> Stmt StmtList | ε
-Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef 
-PrintStmt -> print E
-ReturnStmt -> return E
-V -> var id = E | var id ArrayDims = E
-A -> id = E | id ArrayAccess = E
-IfStmt -> if (E) { StatementList } ElseIfStmt
-ElseIfStmt -> elseif (E) { StatementList } ElseIfStmt | ε
-Else ->  else { StatementList } | ε
-WhileStmt -> while (E) { StatementList }
-E -> value R | (E) R | id R | FuncCall | ArrayLiteral 
-R -> + E R | - E R | * E R | and E R | or E R | == E R | != E R ε
-FuncDef -> function id (Params) { StatementList }
-Params -> id ParamsTail | ε
-ParamsTail -> , id ParamsTail | ε
-FuncCall -> id (Args)
-Args -> E ArgsTail | ε
-ArgsTail -> , E ArgsTail | ε
-ArrayDims -> [value] ArrayDims | ε
-ArrayAccess -> [E] ArrayAccess | ε
-ArrayLiteral -> [ArrayElements]
-ArrayElements -> E ArrayElementsTail | ε
-ArrayElementsTail -> , E ArrayElementsTail | ε
+print typeof(x) // int
+```
+
+### Conditionals
+```
+if (condition) {
+    // statements
+} elseif (condition) {
+    // statements
+} else {
+    // statements
+}
+```
+
+### Loops
+```
+while(condition) {
+    statements;
+}
+```
+
+### Functions
+We can define functions like as:
+```
+function fn_name(arg1, arg2) {
+    // statements
+    return value
+}
+
+// usage
+var x = fn_name(a, b)
+```
+
+Some of the predefined library function provided by the language itself are:
+- readFile
+- writeFile
+- appendFile
+- input
+- length
+- pos
+- substr
+- typeof
+- parseInt
+- parseFloat
+
+### Array
+```
+// Define an array
+var arr = # // <- creates an empty array
+var arr = [0, 2 , 3] <- creates filles array
+print length(arr)
+print arr[1]
 ```

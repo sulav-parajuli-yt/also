@@ -1,0 +1,9 @@
+function helloworld() {
+    var a = 10
+    a = 20
+    print a
+}
+
+var a = 5
+helloworld(a)
+print a

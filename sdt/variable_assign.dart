@@ -13,6 +13,10 @@ void A() {
   dynamic value = E();
   // moveAheadByCheck(TokenType.SEMICOLON);
 
+  if(constantTable["main"]!.contains(id)) {
+    throw Exception("$id is a constant and can not be changed.");
+  }
+
   if (symbolTable["main"]!.containsKey(id)) {
     if (indices.isNotEmpty) {
       setArrayValue(symbolTable["main"]![id], indices, value);

@@ -11,9 +11,9 @@ import 'variable_dec.dart';
 import 'while_loop.dart';
 
 
-// Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef 
+// Stmt -> V | A | E | IfStmt | WhileStmt | PrintStmt | ReturnStmt | FuncDef
 void Stmt() {
-  if (tokens[currentToken].type == TokenType.VAR) {
+  if (tokens[currentToken].type == TokenType.VAR || tokens[currentToken].type == TokenType.CONSTANT) {
     V();
   } else if (tokens[currentToken].type == TokenType.IF) {
     IfStmt();
